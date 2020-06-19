@@ -22,6 +22,13 @@ interface SaveOptions {
   paddingBottom?: number;
 }
 
+export interface SaveCanvasObject {
+  filePath: string;
+  fileName: string;
+  width: number;
+  height: number;
+}
+
 export class Drawing {
   canvas: Canvas;
   ctx: CanvasRenderingContext2D;
@@ -55,9 +62,13 @@ export class Drawing {
     this.ctx.restore();
   }
 
+  pad(padding: number): void {
+    this.totalHeight += padding;
+  }
+
   wrappedText(
     text: string,
-    boxWidth: number,
+    boxWidth?: number,
     { lineHeight = 1, finalLineHeight = 0.2, x: startingX = 0, y: startingY = 0 }: WrappedTextOptions = {},
   ): void {
     this.setTranslate();
@@ -82,7 +93,7 @@ export class Drawing {
 
       wordX += width + spaceWidth;
 
-      if (wordX >= boxWidth) {
+      if (wordX >= (boxWidth || this.canvas.width)) {
         wordX = width + spaceWidth;
         wordY += actualLineHeight;
 
@@ -126,7 +137,7 @@ export class Drawing {
   }
 
   saveCanvas({ name = new Date().getTime().toString(), paddingBottom = 10, paddingTop = 0 }: SaveOptions = {}): Promise<
-    boolean
+    SaveCanvasObject
   > {
     return new Promise((resolve, reject) => {
       // this.canvas.height = this.totalHeight;
@@ -138,22 +149,21 @@ export class Drawing {
 
       const buf = saveCanvas.toBuffer();
 
-      fs.writeFile(tmpFolderPath(`${name}.jpg`), buf, (err) => {
+      const fileName = `${name}.jpg`;
+      const filePath = tmpFolderPath(fileName);
+
+      fs.writeFile(filePath, buf, (err) => {
         if (err) {
           reject(err);
         } else {
-          resolve(true);
+          resolve({
+            filePath,
+            fileName,
+            width: this.canvas.width,
+            height: this.totalHeight + paddingBottom + paddingTop,
+          });
         }
       });
     });
   }
 }
-
-// export function createDocument(name = new Date().getTime().toString()): PDFKit.PDFDocument {
-//   fs.ensureDirSync(tmpFolderPath(''));
-
-//   const doc = new PDFDocument();
-//   doc.pipe(fs.createWriteStream(tmpFolderPath(`${name}.pdf`)));
-
-//   return doc;
-// }

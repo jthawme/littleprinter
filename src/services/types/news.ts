@@ -1,3 +1,5 @@
+import { SaveCanvasObject } from '../../utils/drawing';
+
 export type Countries =
   | 'ae'
   | 'ar'
@@ -90,5 +92,5 @@ export interface ArticleItem {
 export interface NewsService {
   name: string;
   refresh: () => Promise<boolean>;
-  run: (options?: NewsOptions) => Promise<boolean>;
+  run: (options?: NewsOptions) => Promise<SaveCanvasObject>;
 }
