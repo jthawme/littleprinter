@@ -16,3 +16,4 @@ A service that can print receipts periodically with useful or not so useful mate
 - Facts
 - Puzzle
 - Social
+- Poetry
