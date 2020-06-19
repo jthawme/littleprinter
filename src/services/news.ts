@@ -5,12 +5,40 @@ import { GeneralObject } from './types/base';
 import { NewsService, NewsOptions, SourceItem, ArticleItem } from './types/news';
 import { serviceDataPath } from '../utils/paths';
 import { Drawing, SaveCanvasObject } from '../utils/drawing';
+import { getOfflineData, saveOfflineData } from '../utils/offline';
 
+/**
+ * Returns the prefixed route
+ *
+ * @param route
+ */
 function newsApi(route: string): string {
   return `https://newsapi.org/v2${route}`;
 }
 
+/**
+ * Strips the news source from the ugly title
+ *
+ * @param title
+ * @param source
+ */
+function stripSource(title: string, source: string) {
+  let newTitle = title;
+
+  newTitle = newTitle.replace(` - ${source}`, '');
+  newTitle = newTitle.replace(source, '');
+
+  return newTitle;
+}
+
+/**
+ * Gets a list of all sources from news api to save for the interface
+ */
 function getSources(): Promise<SourceItem[]> {
+  if (process.env.OFFLINE) {
+    return getOfflineData<SourceItem[]>('newsapisources.json');
+  }
+
   return axios
     .get(newsApi('/sources'), {
       params: {
@@ -23,10 +51,20 @@ function getSources(): Promise<SourceItem[]> {
       }
 
       return data.sources;
-    });
+    })
+    .then((data) => saveOfflineData<SourceItem[]>('newsapisources.json', data));
 }
 
+/**
+ * Gets the headlines of the filtered news
+ *
+ * @param options
+ */
 function getHeadlines({ country, category, source, limit = 3 }: NewsOptions): Promise<ArticleItem[]> {
+  if (process.env.OFFLINE) {
+    return getOfflineData<ArticleItem[]>('newsapiheadlines.json');
+  }
+
   if (!process.env.NEWS_API_KEY) {
     throw new Error('No News API Key found');
   }
@@ -60,18 +98,15 @@ function getHeadlines({ country, category, source, limit = 3 }: NewsOptions): Pr
       }
 
       return data.articles;
-    });
+    })
+    .then((data) => saveOfflineData<ArticleItem[]>('newsapiheadlines.json', data));
 }
 
-function stripSource(title: string, source: string) {
-  let newTitle = title;
-
-  newTitle = newTitle.replace(` - ${source}`, '');
-  newTitle = newTitle.replace(source, '');
-
-  return newTitle;
-}
-
+/**
+ * Turns the article data into the visual counterparts
+ *
+ * @param articles
+ */
 async function renderArticles(articles: ArticleItem[]): Promise<SaveCanvasObject> {
   return new Promise((resolve) => {
     const canvas = new Drawing(400);

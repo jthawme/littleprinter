@@ -147,6 +147,12 @@ export class Drawing {
 
       saveCtx.drawImage(this.canvas, 0, paddingTop);
 
+      if (process.env.OFFLINE) {
+        saveCtx.font = 'bold 24px Helvetica';
+        saveCtx.fillStyle = 'red';
+        saveCtx.fillText('Offline mode', 0, 24);
+      }
+
       const buf = saveCanvas.toBuffer();
 
       const fileName = `${name}.jpg`;

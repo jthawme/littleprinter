@@ -13,3 +13,8 @@ export function tmpFolderPath(fileName: string): string {
   fs.ensureDirSync(rootPath('tmp'));
   return path.resolve(rootPath('tmp'), fileName);
 }
+
+export function offlineFolderPath(fileName: string): string {
+  fs.ensureDirSync(rootPath('offline'));
+  return path.resolve(rootPath('offline'), fileName);
+}

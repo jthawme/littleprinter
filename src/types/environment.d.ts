@@ -3,6 +3,8 @@ declare global {
     interface ProcessEnv {
       NEWS_API_KEY?: string;
       NODE_ENV: 'development' | 'production';
+      OFFLINE: boolean;
+      SAVE_OFFLINE?: boolean;
     }
   }
 }
