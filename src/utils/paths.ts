@@ -7,3 +7,7 @@ export function rootPath(extraPath: string): string {
 export function serviceDataPath(fileName: string): string {
   return path.resolve(rootPath('src/services/data'), fileName);
 }
+
+export function tmpFolderPath(fileName: string): string {
+  return path.resolve(rootPath('tmp'), fileName);
+}
