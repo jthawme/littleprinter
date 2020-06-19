@@ -9,6 +9,10 @@ export function serviceDataPath(fileName: string): string {
   return path.resolve(rootPath('src/services/data'), fileName);
 }
 
+export function serviceAssetPath(fileName: string): string {
+  return path.resolve(rootPath('src/services/assets'), fileName);
+}
+
 export function tmpFolderPath(fileName: string): string {
   fs.ensureDirSync(rootPath('tmp'));
   return path.resolve(rootPath('tmp'), fileName);

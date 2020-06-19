@@ -1,6 +1,9 @@
 import dotenv from 'dotenv';
 import NewsService from './services/news';
+import RedditService from './services/reddit';
+
 import { createDocument } from './utils/pdf';
+import logger from './utils/logger';
 // import { Drawing } from './utils/drawing';
 
 dotenv.config();
@@ -13,13 +16,21 @@ Promise.all([
     category: 'entertainment',
     country: 'us',
   }),
-]).then((pages) => {
-  const documentWidth = Math.max(...pages.map((p) => p.width));
-  const documentHeight = pages.reduce((prev, curr) => prev + curr.height, 0);
+  RedditService.run({
+    subreddit: 'r/todayilearned',
+  }),
+  RedditService.run({
+    subreddit: 'r/poppunkers',
+  }),
+])
+  .then((pages) => {
+    const documentWidth = Math.max(...pages.map((p) => p.width));
+    const documentHeight = pages.reduce((prev, curr) => prev + curr.height, 0);
 
-  const doc = createDocument(documentWidth, documentHeight);
+    const doc = createDocument(documentWidth, documentHeight);
 
-  pages.forEach((page) => doc.image(page.filePath));
+    pages.forEach((page) => doc.image(page.filePath));
 
-  doc.end();
-});
+    doc.end();
+  })
+  .catch((e) => logger.error(e.message()));

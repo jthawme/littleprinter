@@ -4,6 +4,11 @@ import { createCanvas, Canvas, loadImage } from 'canvas';
 
 import { tmpFolderPath } from '../utils/paths';
 
+export interface GenericReturn {
+  width: number;
+  height: number;
+}
+
 interface GenericOptions {
   x?: number;
   y?: number;
@@ -13,8 +18,14 @@ interface WrappedTextOptions extends GenericOptions {
   finalLineHeight?: number;
 }
 
+interface RectOptions extends GenericOptions {
+  color?: string;
+}
+
+type InlineArrayFunction = (x: number) => GenericReturn | Promise<GenericReturn>;
+
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface WrappedImageOptions extends GenericOptions {}
+export interface WrappedImageOptions extends GenericOptions {}
 
 interface SaveOptions {
   name?: string;
@@ -33,13 +44,13 @@ export class Drawing {
   canvas: Canvas;
   ctx: CanvasRenderingContext2D;
 
-  totalHeight: number;
+  sectionHeights: number[];
 
   constructor(width: number) {
     this.canvas = createCanvas(width, 9999);
     this.ctx = this.canvas.getContext('2d');
 
-    this.totalHeight = 0;
+    this.sectionHeights = [];
 
     return this;
   }
@@ -52,26 +63,35 @@ export class Drawing {
     return this.totalHeight;
   }
 
-  setTranslate(): void {
+  setTranslate(x = 0): void {
     this.ctx.save();
-    this.ctx.translate(0, this.totalHeight);
+    this.ctx.translate(x, this.totalHeight);
   }
 
   restoreTranslate(addHeight: number): void {
-    this.totalHeight += addHeight;
+    this.sectionHeights.push(addHeight);
     this.ctx.restore();
   }
 
+  resetLastHeight(): void {
+    this.sectionHeights.pop();
+  }
+
+  get totalHeight(): number {
+    return this.sectionHeights.reduce((prev, curr) => prev + curr, 0);
+  }
+
   pad(padding: number): void {
-    this.totalHeight += padding;
+    // this.sectionHeights.push(padding);
+    this.sectionHeights[this.sectionHeights.length - 1] += padding;
   }
 
   wrappedText(
     text: string,
     boxWidth?: number,
     { lineHeight = 1, finalLineHeight = 0.2, x: startingX = 0, y: startingY = 0 }: WrappedTextOptions = {},
-  ): void {
-    this.setTranslate();
+  ): GenericReturn {
+    this.setTranslate(startingX);
 
     const words = text.split(' ');
 
@@ -79,7 +99,7 @@ export class Drawing {
     const { width: spaceWidth } = this.ctx.measureText(' ');
     const actualLineHeight = (metrics.emHeightAscent + metrics.emHeightDescent) * lineHeight;
 
-    let wordX = startingX;
+    let wordX = 0;
     let wordY = startingY + actualLineHeight;
 
     const wordObjects = words.map((w) => {
@@ -109,31 +129,74 @@ export class Drawing {
     });
 
     this.restoreTranslate(wordY + actualLineHeight * finalLineHeight);
+
+    return {
+      width: wordY === startingY + actualLineHeight ? this.ctx.measureText(text).width : boxWidth || this.canvas.width,
+      height: wordY + actualLineHeight * finalLineHeight,
+    };
   }
 
   async drawImage(
     image: string,
     drawWidth?: number,
     { x: startingX = 0, y: startingY = 0 }: WrappedImageOptions = {},
-  ): Promise<void> {
-    this.setTranslate();
+  ): Promise<GenericReturn> {
+    this.setTranslate(startingX);
 
     return loadImage(image).then((img) => {
       const imgWidth = drawWidth || this.canvas.width;
       const imgHeight = (imgWidth / img.width) * img.height;
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      this.ctx.drawImage(img as any, startingX, startingY, drawWidth || this.canvas.width, imgHeight);
+      this.ctx.drawImage(img as any, 0, startingY, drawWidth || this.canvas.width, imgHeight);
 
       this.restoreTranslate(imgHeight + startingY);
-      return;
+      return { width: imgWidth, height: imgHeight };
     });
   }
 
-  rect(width: number, height: number, { x: startingX = 0, y: startingY = 0 }: GenericOptions = {}): void {
+  rect(width: number, height: number, { x: startingX = 0, y: startingY = 0, color = 'black' }: RectOptions = {}): void {
     this.setTranslate();
+    this.ctx.fillStyle = color;
     this.ctx.fillRect(startingX, startingY, width, height);
     this.restoreTranslate(startingY + height);
+  }
+
+  inline(commands: Array<number | InlineArrayFunction>): Promise<GenericReturn> {
+    let x = 0;
+    const heights: number[] = [];
+
+    return new Promise((resolve) => {
+      const runner = async (idx = 0) => {
+        if (idx >= commands.length) {
+          const height = Math.max(...heights);
+          this.pad(height);
+
+          resolve({
+            width: x,
+            height,
+          });
+          return;
+        }
+
+        const current = commands[idx];
+
+        if (typeof current === 'number') {
+          x += current;
+        } else {
+          const { width, height } = await Promise.resolve(current(x));
+
+          x += width;
+          heights.push(height);
+
+          this.resetLastHeight();
+        }
+
+        runner(idx + 1);
+      };
+
+      runner();
+    });
   }
 
   saveCanvas({ name = new Date().getTime().toString(), paddingBottom = 10, paddingTop = 0 }: SaveOptions = {}): Promise<
