@@ -5,6 +5,7 @@ declare global {
       NODE_ENV: 'development' | 'production';
       OFFLINE: boolean;
       SAVE_OFFLINE?: boolean;
+      WEATHER_API_KEY?: string;
     }
   }
 }

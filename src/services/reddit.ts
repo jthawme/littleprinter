@@ -45,7 +45,10 @@ function getTopPosts({ subreddit, limit = 5 }: RedditOptions): Promise<PostItem[
  *
  * @param posts
  */
-async function renderPosts(posts: PostItem[]): Promise<SaveCanvasObject> {
+async function renderPosts(
+  posts: PostItem[],
+  { withImage = true, expand = false }: Partial<RedditOptions> = {},
+): Promise<SaveCanvasObject> {
   return new Promise((resolve) => {
     const canvas = new Drawing(400);
 
@@ -59,17 +62,45 @@ async function renderPosts(posts: PostItem[]): Promise<SaveCanvasObject> {
         return;
       }
 
-      const { thumbnail, title, ups, created, subreddit_name_prefixed } = posts[idx].data;
+      const { thumbnail, title, ups, created, subreddit_name_prefixed, selftext } = posts[idx].data;
 
       if (idx === 0) {
-        canvas.ctx.font = 'bold 24px Helvetica';
-        canvas.wrappedText(subreddit_name_prefixed);
-        canvas.rect(canvas.width, 1);
-        canvas.pad(10);
+        canvas.title(subreddit_name_prefixed);
       }
+
+      await canvas.inline([
+        (x: number) => {
+          if (!withImage) {
+            return { width: 0, height: 0 };
+          }
+
+          if (thumbnail && thumbnail !== 'default' && thumbnail !== 'self') {
+            return canvas.drawImage(thumbnail, imageWidth, { x });
+          } else {
+            canvas.rect(imageWidth, 50, { color: 'grey', x });
+            return {
+              width: imageWidth,
+              height: 50,
+            };
+          }
+        },
+        withImage ? gutter : 0,
+        (x: number) => {
+          canvas.ctx.font = '14px Helvetica';
+          return canvas.wrappedText(title, withImage ? canvas.width - (imageWidth + gutter) : undefined, { x, y: -2 });
+        },
+      ]);
+
+      if (expand && selftext) {
+        canvas.wrappedText(selftext);
+      }
+
+      // Pad for main content
+      canvas.pad(5);
 
       // Draw the upvotes and the date
       await canvas.inline([
+        withImage ? imageWidth + gutter : 0,
         (x: number) => drawEmoji('thumbs-up', canvas, 16, { x }),
         2,
         (x: number) => {
@@ -85,29 +116,7 @@ async function renderPosts(posts: PostItem[]): Promise<SaveCanvasObject> {
         },
       ]);
 
-      // Pad for main content
-      canvas.pad(2);
-
-      await canvas.inline([
-        (x: number) => {
-          if (thumbnail && thumbnail !== 'default' && thumbnail !== 'self') {
-            return canvas.drawImage(thumbnail, imageWidth, { x });
-          } else {
-            canvas.rect(imageWidth, 50, { color: 'grey', x });
-            return {
-              width: imageWidth,
-              height: 50,
-            };
-          }
-        },
-        gutter,
-        (x: number) => {
-          canvas.ctx.font = '14px Helvetica';
-          return canvas.wrappedText(title, canvas.width - (imageWidth + gutter), { x, y: -2 });
-        },
-      ]);
-
-      canvas.pad(40);
+      canvas.pad(20);
 
       runner(idx + 1);
     };
@@ -123,7 +132,7 @@ async function renderPosts(posts: PostItem[]): Promise<SaveCanvasObject> {
  */
 function run(opts: RedditOptions): Promise<SaveCanvasObject> {
   return getTopPosts(opts).then((posts) => {
-    return renderPosts(posts);
+    return renderPosts(posts, opts);
   });
 }
 

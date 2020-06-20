@@ -2,6 +2,8 @@ import { SaveCanvasObject } from '../../utils/drawing';
 
 export interface RedditOptions {
   subreddit: string;
+  withImage?: boolean;
+  expand?: boolean;
   limit?: number;
 }
 
@@ -11,6 +13,7 @@ export interface PostData {
   ups: number;
   created: number;
   subreddit_name_prefixed: string;
+  selftext: string;
 }
 
 export interface PostItem {

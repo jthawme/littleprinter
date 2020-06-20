@@ -82,8 +82,7 @@ export class Drawing {
   }
 
   pad(padding: number): void {
-    // this.sectionHeights.push(padding);
-    this.sectionHeights[this.sectionHeights.length - 1] += padding;
+    this.sectionHeights.push(padding);
   }
 
   wrappedText(
@@ -93,7 +92,7 @@ export class Drawing {
   ): GenericReturn {
     this.setTranslate(startingX);
 
-    const words = text.split(' ');
+    const words = text.replace('\n', '').split(' ');
 
     const metrics = this.ctx.measureText('M');
     const { width: spaceWidth } = this.ctx.measureText(' ');
@@ -184,12 +183,15 @@ export class Drawing {
         if (typeof current === 'number') {
           x += current;
         } else {
+          const heightsSize = this.sectionHeights.length;
           const { width, height } = await Promise.resolve(current(x));
 
           x += width;
           heights.push(height);
 
-          this.resetLastHeight();
+          if (this.sectionHeights.length !== heightsSize) {
+            this.resetLastHeight();
+          }
         }
 
         runner(idx + 1);
@@ -197,6 +199,14 @@ export class Drawing {
 
       runner();
     });
+  }
+
+  title(title: string): void {
+    this.ctx.font = 'bold 24px Helvetica';
+    this.wrappedText(title);
+    this.pad(4);
+    this.rect(this.width, 1);
+    this.pad(10);
   }
 
   saveCanvas({ name = new Date().getTime().toString(), paddingBottom = 10, paddingTop = 0 }: SaveOptions = {}): Promise<

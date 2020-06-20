@@ -111,6 +111,8 @@ async function renderArticles(articles: ArticleItem[]): Promise<SaveCanvasObject
   return new Promise((resolve) => {
     const canvas = new Drawing(400);
 
+    canvas.title('News');
+
     const runner = async (idx: number) => {
       if (idx >= articles.length) {
         const imageObject = await canvas.saveCanvas();
@@ -135,7 +137,7 @@ async function renderArticles(articles: ArticleItem[]): Promise<SaveCanvasObject
         canvas.wrappedText(description);
       }
 
-      canvas.rect(canvas.width * 0.25, 1, { y: 10 });
+      canvas.rect(canvas.width * 0.15, 3, { y: 10 });
       canvas.pad(40);
 
       runner(idx + 1);
