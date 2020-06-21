@@ -3,6 +3,7 @@ import fs from 'fs-extra';
 import { createCanvas, Canvas, loadImage } from 'canvas';
 
 import { tmpFolderPath } from '../utils/paths';
+import { useFont, FontStyle } from './font';
 
 export interface GenericReturn {
   width: number;
@@ -16,6 +17,8 @@ interface GenericOptions {
 interface WrappedTextOptions extends GenericOptions {
   lineHeight?: number;
   finalLineHeight?: number;
+  align?: 'left' | 'center' | 'right';
+  fontStyle?: FontStyle;
 }
 
 interface RectOptions extends GenericOptions {
@@ -46,6 +49,8 @@ export class Drawing {
 
   sectionHeights: number[];
 
+  gutter = 10;
+
   constructor(width: number) {
     this.canvas = createCanvas(width, 9999);
     this.ctx = this.canvas.getContext('2d');
@@ -63,9 +68,9 @@ export class Drawing {
     return this.totalHeight;
   }
 
-  setTranslate(x = 0): void {
+  setTranslate(x = 0, y = 0): void {
     this.ctx.save();
-    this.ctx.translate(x, this.totalHeight);
+    this.ctx.translate(x, this.totalHeight + y);
   }
 
   restoreTranslate(addHeight: number): void {
@@ -75,6 +80,20 @@ export class Drawing {
 
   resetLastHeight(): void {
     this.sectionHeights.pop();
+  }
+
+  columnWidth(col: number, withGutter = false): number {
+    const singleColumn = (this.width - this.gutter * 3) / 4;
+    const gutterLength = withGutter ? col : col - 1;
+    return singleColumn * col + this.gutter * gutterLength;
+  }
+
+  getWidth(num?: number): number {
+    if (!num) {
+      return this.width;
+    }
+
+    return num <= 4 ? this.columnWidth(num) : num;
   }
 
   get totalHeight(): number {
@@ -88,50 +107,78 @@ export class Drawing {
   wrappedText(
     text: string,
     boxWidth?: number,
-    { lineHeight = 1, finalLineHeight = 0.2, x: startingX = 0, y: startingY = 0 }: WrappedTextOptions = {},
+    {
+      lineHeight = 1,
+      finalLineHeight = 0.2,
+      x: startingX = 0,
+      y: startingY = 0,
+      align = 'left',
+      fontStyle = 'small',
+    }: WrappedTextOptions = {},
   ): GenericReturn {
-    this.setTranslate(startingX);
+    // Sets starting translation point
+    this.setTranslate(startingX, startingY);
 
-    const words = text.replace('\n', '').split(' ');
+    // Configures the font
+    useFont(fontStyle, this.ctx);
 
+    // Splits all words into array
+    const words = text.split(' ').map((w, idx, arr) => (idx < arr.length - 1 ? `${w} ` : w));
+
+    // Apparently capital M is most representative of height
     const metrics = this.ctx.measureText('M');
-    const { width: spaceWidth } = this.ctx.measureText(' ');
-    const actualLineHeight = (metrics.emHeightAscent + metrics.emHeightDescent) * lineHeight;
+
+    // Get Width and Height of rows and column
+    const rowHeight = (metrics.emHeightAscent + metrics.emHeightDescent) * lineHeight;
+    const columnWidth = this.getWidth(boxWidth);
+
+    const rows: Array<Array<{ word: string; width: number }>> = [[]];
 
     let wordX = 0;
-    let wordY = startingY + actualLineHeight;
 
-    const wordObjects = words.map((w) => {
-      const curr = {
-        text: w,
-        x: wordX,
-        y: wordY,
-      };
-
+    words.forEach((w) => {
       const { width } = this.ctx.measureText(w);
+      wordX += width;
 
-      wordX += width + spaceWidth;
-
-      if (wordX >= (boxWidth || this.canvas.width)) {
-        wordX = width + spaceWidth;
-        wordY += actualLineHeight;
-
-        curr.x = 0;
-        curr.y = wordY;
+      if (wordX >= columnWidth) {
+        rows.push([]);
+        wordX = 0;
       }
 
-      return curr;
+      rows[rows.length - 1].push({ word: w, width });
     });
 
-    wordObjects.forEach(({ text, x, y }) => {
-      this.ctx.fillText(text, x, y);
+    rows.forEach((row) => {
+      this.ctx.translate(0, rowHeight);
+
+      const rowWidth = row.reduce((p, c) => p + c.width, 0);
+      let rowX = 0;
+
+      const getX = () => {
+        switch (align) {
+          case 'right':
+            return columnWidth - rowWidth + rowX;
+          case 'center':
+            return (columnWidth - rowWidth) / 2 + rowX;
+          case 'left':
+          default:
+            return rowX;
+        }
+      };
+
+      row.forEach(({ word, width }) => {
+        this.ctx.fillText(word, getX(), 0);
+        rowX += width;
+      });
     });
 
-    this.restoreTranslate(wordY + actualLineHeight * finalLineHeight);
+    const totalHeight = rows.length * rowHeight + rowHeight * finalLineHeight;
+
+    this.restoreTranslate(totalHeight);
 
     return {
-      width: wordY === startingY + actualLineHeight ? this.ctx.measureText(text).width : boxWidth || this.canvas.width,
-      height: wordY + actualLineHeight * finalLineHeight,
+      width: rows.length > 1 ? columnWidth : rows[0].reduce((p, c) => p + c.width, 0),
+      height: totalHeight,
     };
   }
 
@@ -209,7 +256,7 @@ export class Drawing {
     this.pad(10);
   }
 
-  saveCanvas({ name = new Date().getTime().toString(), paddingBottom = 10, paddingTop = 0 }: SaveOptions = {}): Promise<
+  saveCanvas({ name = new Date().getTime().toString(), paddingBottom = 0, paddingTop = 0 }: SaveOptions = {}): Promise<
     SaveCanvasObject
   > {
     return new Promise((resolve, reject) => {

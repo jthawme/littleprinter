@@ -6,7 +6,6 @@ import WeatherService from './services/weather';
 
 import { createDocument } from './utils/pdf';
 import logger from './utils/logger';
-// import { Drawing } from './utils/drawing';
 
 dotenv.config();
 
@@ -41,4 +40,6 @@ Promise.all([
     });
     doc.end();
   })
-  .catch((e) => logger.error(e.message()));
+  .catch((e) => {
+    logger.error(e.message);
+  });

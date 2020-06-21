@@ -4,6 +4,7 @@ import { GeneralObject } from './types/base';
 import { Drawing, SaveCanvasObject } from '../utils/drawing';
 import { getOfflineData, saveOfflineData } from '../utils/offline';
 import { PoetryService, PoetryOptions, PoemItem } from './types/poetry';
+import { CANVAS_WIDTH } from '../utils/constants';
 
 /**
  * Returns the prefixed route
@@ -53,20 +54,29 @@ function getRandomPoem({ limit = 25 }: PoetryOptions = {}): Promise<PoemItem> {
  * @param posts
  */
 async function renderPosts(poem: PoemItem): Promise<SaveCanvasObject> {
-  const canvas = new Drawing(400);
+  const canvas = new Drawing(CANVAS_WIDTH);
 
-  canvas.ctx.font = 'bold 15px serif';
-  canvas.wrappedText(poem.title);
-  canvas.wrappedText(`– ${poem.author}`);
+  canvas.wrappedText(poem.title, canvas.width, {
+    fontStyle: 'small',
+    finalLineHeight: 0,
+  });
 
   canvas.pad(10);
 
-  canvas.ctx.font = '13px serif';
   poem.lines.forEach((line) => {
-    canvas.wrappedText(line.trim(), canvas.width * 0.8, { x: canvas.width * 0.2 });
+    canvas.wrappedText(line.trim(), 4, {
+      fontStyle: 'small',
+      finalLineHeight: 0,
+    });
   });
 
-  return canvas.saveCanvas({ paddingBottom: 50, paddingTop: 40 });
+  canvas.pad(10);
+
+  canvas.wrappedText(poem.author, 4, {
+    align: 'right',
+  });
+
+  return canvas.saveCanvas();
 }
 
 /**
