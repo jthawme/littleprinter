@@ -4,7 +4,7 @@ import { GeneralObject } from './types/base';
 import { Drawing, SaveCanvasObject } from '../utils/drawing';
 import { getOfflineData, saveOfflineData } from '../utils/offline';
 import { PoetryService, PoetryOptions, PoemItem } from './types/poetry';
-import { CANVAS_WIDTH } from '../utils/constants';
+import { CANVAS_WIDTH, SERVICES } from '../utils/constants';
 
 /**
  * Returns the prefixed route
@@ -91,7 +91,7 @@ function run(opts?: PoetryOptions): Promise<SaveCanvasObject> {
 }
 
 const Service: PoetryService = {
-  name: 'Poetry Service',
+  name: SERVICES.POETRY,
   run,
 };
 

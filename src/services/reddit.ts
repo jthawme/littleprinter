@@ -1,11 +1,10 @@
 import axios from 'axios';
-import dayjs from 'dayjs';
 
 import { GeneralObject } from './types/base';
 import { Drawing, SaveCanvasObject } from '../utils/drawing';
 import { getOfflineData, saveOfflineData } from '../utils/offline';
 import { RedditService, RedditOptions, PostItem } from './types/reddit';
-import { drawEmoji } from '../utils/emoji';
+import { CANVAS_WIDTH, SERVICES } from '../utils/constants';
 
 /**
  * Returns the prefixed route
@@ -47,13 +46,10 @@ function getTopPosts({ subreddit, limit = 5 }: RedditOptions): Promise<PostItem[
  */
 async function renderPosts(
   posts: PostItem[],
-  { withImage = true, expand = false }: Partial<RedditOptions> = {},
+  { withImage = true }: Partial<RedditOptions> = {},
 ): Promise<SaveCanvasObject> {
   return new Promise((resolve) => {
-    const canvas = new Drawing(400);
-
-    const gutter = 10;
-    const imageWidth = 100;
+    const canvas = new Drawing(CANVAS_WIDTH);
 
     const runner = async (idx: number) => {
       if (idx >= posts.length) {
@@ -62,10 +58,17 @@ async function renderPosts(
         return;
       }
 
-      const { thumbnail, title, ups, created, subreddit_name_prefixed, selftext } = posts[idx].data;
+      const { thumbnail, title, subreddit_name_prefixed } = posts[idx].data;
 
       if (idx === 0) {
-        canvas.title(subreddit_name_prefixed);
+        canvas.title('Reddit');
+        canvas.resetLastHeight();
+        canvas.wrappedText(subreddit_name_prefixed, 4, {
+          fontStyle: 'smallTitle',
+          align: 'right',
+        });
+
+        canvas.pad(5);
       }
 
       await canvas.inline([
@@ -75,48 +78,18 @@ async function renderPosts(
           }
 
           if (thumbnail && thumbnail !== 'default' && thumbnail !== 'self') {
-            return canvas.drawImage(thumbnail, imageWidth, { x });
+            return canvas.drawImage(thumbnail, 1, { x });
           } else {
-            canvas.rect(imageWidth, 50, { color: 'grey', x });
-            return {
-              width: imageWidth,
-              height: 50,
-            };
+            return canvas.rect(1, 50, { color: 'grey', x });
           }
         },
-        withImage ? gutter : 0,
+        withImage ? canvas.gutter : 0,
         (x: number) => {
-          canvas.ctx.font = '14px Helvetica';
-          return canvas.wrappedText(title, withImage ? canvas.width - (imageWidth + gutter) : undefined, { x, y: -2 });
+          return canvas.wrappedText(title, withImage ? 3 : 4, { x, y: -2 });
         },
       ]);
 
-      if (expand && selftext) {
-        canvas.wrappedText(selftext);
-      }
-
-      // Pad for main content
-      canvas.pad(5);
-
-      // Draw the upvotes and the date
-      await canvas.inline([
-        withImage ? imageWidth + gutter : 0,
-        (x: number) => drawEmoji('thumbs-up', canvas, 16, { x }),
-        2,
-        (x: number) => {
-          canvas.ctx.font = 'bold 10px Helvetica';
-          return canvas.wrappedText(ups.toString(), undefined, { x, y: 3 });
-        },
-        5,
-        (x: number) => drawEmoji('stopwatch', canvas, 16, { x }),
-        2,
-        (x: number) => {
-          canvas.ctx.font = 'bold 10px Helvetica';
-          return canvas.wrappedText(dayjs(created * 1000).format('HH:mm D MMM'), undefined, { x, y: 3 });
-        },
-      ]);
-
-      canvas.pad(20);
+      canvas.pad(10);
 
       runner(idx + 1);
     };
@@ -137,7 +110,7 @@ function run(opts: RedditOptions): Promise<SaveCanvasObject> {
 }
 
 const Service: RedditService = {
-  name: 'News Service',
+  name: SERVICES.REDDIT,
   run,
 };
 

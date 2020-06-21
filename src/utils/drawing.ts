@@ -4,6 +4,7 @@ import { createCanvas, Canvas, loadImage } from 'canvas';
 
 import { tmpFolderPath } from '../utils/paths';
 import { useFont, FontStyle } from './font';
+import { SERVICE_PADDING } from './constants';
 
 export interface GenericReturn {
   width: number;
@@ -78,8 +79,10 @@ export class Drawing {
     this.ctx.restore();
   }
 
-  resetLastHeight(): void {
-    this.sectionHeights.pop();
+  resetLastHeight(n = 1): void {
+    for (let i = 0; i < n; i++) {
+      this.sectionHeights.pop();
+    }
   }
 
   columnWidth(col: number, withGutter = false): number {
@@ -189,23 +192,34 @@ export class Drawing {
   ): Promise<GenericReturn> {
     this.setTranslate(startingX);
 
+    const columnWidth = this.getWidth(drawWidth);
+
     return loadImage(image).then((img) => {
-      const imgWidth = drawWidth || this.canvas.width;
+      const imgWidth = columnWidth;
       const imgHeight = (imgWidth / img.width) * img.height;
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      this.ctx.drawImage(img as any, 0, startingY, drawWidth || this.canvas.width, imgHeight);
+      this.ctx.drawImage(img as any, 0, startingY, columnWidth, imgHeight);
 
       this.restoreTranslate(imgHeight + startingY);
-      return { width: imgWidth, height: imgHeight };
+      return { width: columnWidth, height: imgHeight };
     });
   }
 
-  rect(width: number, height: number, { x: startingX = 0, y: startingY = 0, color = 'black' }: RectOptions = {}): void {
+  rect(
+    width: number,
+    height: number,
+    { x: startingX = 0, y: startingY = 0, color = 'black' }: RectOptions = {},
+  ): GenericReturn {
     this.setTranslate();
     this.ctx.fillStyle = color;
-    this.ctx.fillRect(startingX, startingY, width, height);
+    this.ctx.fillRect(startingX, startingY, this.getWidth(width), height);
     this.restoreTranslate(startingY + height);
+
+    return {
+      width: this.getWidth(width),
+      height,
+    };
   }
 
   inline(commands: Array<number | InlineArrayFunction>): Promise<GenericReturn> {
@@ -249,11 +263,9 @@ export class Drawing {
   }
 
   title(title: string): void {
-    this.ctx.font = 'bold 24px Helvetica';
-    this.wrappedText(title);
-    this.pad(4);
-    this.rect(this.width, 1);
-    this.pad(10);
+    this.wrappedText(title, 4, {
+      fontStyle: 'smallTitle',
+    });
   }
 
   saveCanvas({ name = new Date().getTime().toString(), paddingBottom = 0, paddingTop = 0 }: SaveOptions = {}): Promise<
@@ -261,8 +273,9 @@ export class Drawing {
   > {
     return new Promise((resolve, reject) => {
       // this.canvas.height = this.totalHeight;
+      const height = this.totalHeight + paddingBottom + paddingTop + SERVICE_PADDING;
 
-      const saveCanvas = createCanvas(this.canvas.width, this.totalHeight + paddingBottom + paddingTop);
+      const saveCanvas = createCanvas(this.canvas.width, height);
       const saveCtx = saveCanvas.getContext('2d');
 
       saveCtx.drawImage(this.canvas, 0, paddingTop);
@@ -286,7 +299,7 @@ export class Drawing {
             filePath,
             fileName,
             width: this.canvas.width,
-            height: this.totalHeight + paddingBottom + paddingTop,
+            height,
           });
         }
       });

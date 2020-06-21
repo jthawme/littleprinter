@@ -6,6 +6,8 @@ import { NewsService, NewsOptions, SourceItem, ArticleItem } from './types/news'
 import { serviceDataPath } from '../utils/paths';
 import { Drawing, SaveCanvasObject } from '../utils/drawing';
 import { getOfflineData, saveOfflineData } from '../utils/offline';
+import { SERVICES } from '../utils/constants';
+import dayjs from 'dayjs';
 
 /**
  * Returns the prefixed route
@@ -111,7 +113,10 @@ async function renderArticles(articles: ArticleItem[]): Promise<SaveCanvasObject
   return new Promise((resolve) => {
     const canvas = new Drawing(400);
 
-    canvas.title('News');
+    canvas.wrappedText('News', undefined, {
+      fontStyle: 'smallTitle',
+      finalLineHeight: 0.5,
+    });
 
     const runner = async (idx: number) => {
       if (idx >= articles.length) {
@@ -120,25 +125,51 @@ async function renderArticles(articles: ArticleItem[]): Promise<SaveCanvasObject
         return;
       }
 
-      const { source, title, urlToImage, description } = articles[idx];
+      const { source, title, urlToImage, description, publishedAt } = articles[idx];
 
       if (idx === 0) {
-        await canvas.drawImage(urlToImage);
+        const imageObject = await canvas.drawImage(urlToImage, 3);
+        canvas.resetLastHeight();
+        canvas.wrappedText(source.name, 1, {
+          fontStyle: 'small',
+          x: canvas.columnWidth(3, true),
+          finalLineHeight: 0,
+        });
+        canvas.wrappedText(dayjs(publishedAt).format('HH:mm'), 1, {
+          fontStyle: 'small',
+          x: canvas.columnWidth(3, true),
+        });
+        canvas.resetLastHeight(2);
+        canvas.pad(imageObject.height);
+
+        canvas.wrappedText(title, 4, {
+          fontStyle: 'heading',
+        });
+
+        canvas.wrappedText(stripSource(description, source.name), 3, {
+          fontStyle: 'small',
+        });
+
+        canvas.pad(15);
+      } else {
+        const titleObject = canvas.wrappedText(title, 3, {
+          fontStyle: 'small',
+        });
+        canvas.resetLastHeight();
+        canvas.wrappedText(source.name, 1, {
+          fontStyle: 'small',
+          x: canvas.columnWidth(3, true),
+          finalLineHeight: 0,
+        });
+        canvas.wrappedText(dayjs(publishedAt).format('HH:mm'), 1, {
+          fontStyle: 'small',
+          x: canvas.columnWidth(3, true),
+        });
+        canvas.resetLastHeight(2);
+        canvas.pad(titleObject.height);
+
+        canvas.pad(15);
       }
-
-      canvas.ctx.font = '10px Helvetica';
-      canvas.wrappedText(source.name);
-
-      canvas.ctx.font = `bold ${idx === 0 ? 32 : 21}px Serif`;
-      canvas.wrappedText(stripSource(title, source.name));
-
-      if (idx === 0) {
-        canvas.ctx.font = '14px Serif';
-        canvas.wrappedText(description);
-      }
-
-      canvas.rect(canvas.width * 0.15, 3, { y: 10 });
-      canvas.pad(40);
 
       runner(idx + 1);
     };
@@ -172,7 +203,7 @@ function refresh(): Promise<boolean> {
 }
 
 const Service: NewsService = {
-  name: 'News Service',
+  name: SERVICES.NEWS,
   run,
   refresh,
 };

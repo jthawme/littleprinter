@@ -11,10 +11,10 @@ registerFont(rootPath('src/utils/fonts/gt-pressura-mono-bold.ttf'), {
 });
 
 const fonts = {
-  small: '9px "GT Pressura Mono"',
-  title: 'bold 18px "GT Pressura Mono"',
-  smallTitle: 'bold 9px "GT Pressura Mono"',
-  heading: '14px "GT Pressura Mono"',
+  small: '11px "GT Pressura Mono"',
+  title: 'bold 21px "GT Pressura Mono"',
+  smallTitle: 'bold 11px "GT Pressura Mono"',
+  heading: '16px "GT Pressura Mono"',
 };
 
 export type FontStyle = keyof typeof fonts;

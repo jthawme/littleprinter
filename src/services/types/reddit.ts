@@ -3,7 +3,6 @@ import { SaveCanvasObject } from '../../utils/drawing';
 export interface RedditOptions {
   subreddit: string;
   withImage?: boolean;
-  expand?: boolean;
   limit?: number;
 }
 

@@ -49,6 +49,6 @@
     }
   },
   "lint-staged": {
-    "*.ts": "eslint --cache --max-warnings=0"
+    "*.ts": "eslint --cache --max-warnings=3"
   }
 }
