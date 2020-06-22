@@ -1,0 +1,2 @@
+{"message":"Error retrieving offline data","level":"error","service":"user-service"}
+{"message":"Error retrieving offline data: hourlyweather.json","level":"error","service":"user-service"}
