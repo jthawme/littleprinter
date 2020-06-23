@@ -96,12 +96,12 @@ async function renderWeather(weather: WeatherItem): Promise<SaveCanvasObject> {
       canvas.ctx.translate(canvas.columnWidth(idx, true), 0);
 
       canvas.wrappedText(idx === 0 ? 'Today' : dayjs(dt * 1000).format('ddd'), canvas.columnWidth(1), {
-        fontStyle: 'smallTitle',
+        fontStyle: 'vsmall',
       });
       canvas.resetLastHeight();
       canvas.wrappedText(`${Math.round(temp.max)}°`, canvas.columnWidth(1), {
         align: 'right',
-        fontStyle: 'smallTitle',
+        fontStyle: 'vsmall',
       });
 
       if (firstWeather) {

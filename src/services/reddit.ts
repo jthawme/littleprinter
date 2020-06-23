@@ -71,8 +71,14 @@ async function renderPosts(
         canvas.pad(5);
       }
 
-      if (thumbnail && thumbnail !== 'default' && thumbnail !== 'self') {
-        await canvas.drawImage(thumbnail, 2);
+      canvas.wrappedText(`${idx + 1}`, 1, {
+        fontStyle: 'title',
+      });
+
+      if (thumbnail && thumbnail !== 'default' && thumbnail !== 'self' && withImage) {
+        canvas.resetLastHeight();
+
+        await canvas.drawImage(thumbnail, 2, { x: canvas.columnWidth(2, true) });
         canvas.pad(5);
       }
 

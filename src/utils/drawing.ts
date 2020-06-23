@@ -143,9 +143,11 @@ export class Drawing {
       const { width } = this.ctx.measureText(w);
       wordX += width;
 
+      console.log(wordX, w);
+
       if (wordX >= columnWidth) {
         rows.push([]);
-        wordX = 0;
+        wordX = width;
       }
 
       rows[rows.length - 1].push({ word: w, width });
