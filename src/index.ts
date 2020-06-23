@@ -154,6 +154,7 @@ run()
     if (process.env.NODE_ENV === 'production') {
       exec(`lp -o fit-to-page ${filename}`);
       console.log('Sent to printer');
+      console.log(`lp -o fit-to-page ${filename}`);
     }
     app.delete();
   })
