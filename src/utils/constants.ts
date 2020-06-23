@@ -1,6 +1,6 @@
-export const CANVAS_WIDTH = 150;
+export const CANVAS_WIDTH = 140;
 
-export const SERVICE_PADDING = 20;
+export const SERVICE_PADDING = 15;
 
 export const SERVICES = {
   NEWS: 'News Service',
