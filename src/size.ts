@@ -66,7 +66,7 @@ run()
     if (process.env.NODE_ENV === 'production') {
       exec(`lp -o media=Custom.${width}x${height} tmp/${filename.split('/').pop()}`);
       console.log('Sent to printer');
-      console.log(`lp -o fit-to-page ${filename}`);
+      console.log(`lp -o media=Custom.${width}x${height} tmp/${filename.split('/').pop()}`);
     }
   })
   .catch((e) => {
