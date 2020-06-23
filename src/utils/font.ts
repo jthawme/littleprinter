@@ -20,9 +20,9 @@ registerFont(rootPath('src/utils/fonts/gt-pressura-mono-bold.ttf'), {
 const fonts = {
   vsmall: 'bold 8px monospace',
   small: '10px monospace',
-  title: 'bold 24px monospace',
+  title: 'bold 18px monospace',
   smallTitle: 'bold 10px monospace',
-  heading: '18px monospace',
+  heading: '14px monospace',
 };
 
 export type FontStyle = keyof typeof fonts;

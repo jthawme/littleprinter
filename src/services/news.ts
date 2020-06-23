@@ -153,21 +153,13 @@ async function renderArticles(articles: ArticleItem[]): Promise<SaveCanvasObject
 
         canvas.pad(15);
       } else {
-        const titleObject = canvas.wrappedText(title, 3, {
-          fontStyle: 'small',
-        });
-        canvas.resetLastHeight();
-        canvas.wrappedText(source.name, 1, {
+        canvas.wrappedText(`${source.name} ${dayjs(publishedAt).format('HH:mm')}`, 4, {
           fontStyle: 'vsmall',
-          x: canvas.columnWidth(3, true),
           finalLineHeight: 0,
         });
-        canvas.wrappedText(dayjs(publishedAt).format('HH:mm'), 1, {
-          fontStyle: 'vsmall',
-          x: canvas.columnWidth(3, true),
+        canvas.wrappedText(title, 4, {
+          fontStyle: 'small',
         });
-        canvas.resetLastHeight(2);
-        canvas.pad(titleObject.height);
 
         canvas.pad(15);
       }

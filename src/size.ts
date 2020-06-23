@@ -6,7 +6,6 @@ import { createDocument } from './utils/pdf';
 import logger from './utils/logger';
 import { SaveCanvasObject, Drawing } from './utils/drawing';
 import { tmpFolderPath } from './utils/paths';
-import { width } from 'pdfkit/js/page';
 
 dotenv.config();
 

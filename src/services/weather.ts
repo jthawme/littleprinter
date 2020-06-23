@@ -73,7 +73,7 @@ async function renderWeather(weather: WeatherItem): Promise<SaveCanvasObject> {
 
         canvas.rect(canvas.columnWidth(2), 2, {
           x: canvas.columnWidth(1, true),
-          y: 9,
+          y: 16,
         });
         canvas.resetLastHeight();
 
@@ -95,7 +95,7 @@ async function renderWeather(weather: WeatherItem): Promise<SaveCanvasObject> {
       canvas.ctx.save();
       canvas.ctx.translate(canvas.columnWidth(idx, true), 0);
 
-      canvas.wrappedText(idx === 0 ? 'Today' : dayjs(dt * 1000).format('ddd'), canvas.columnWidth(1), {
+      canvas.wrappedText(dayjs(dt * 1000).format('ddd'), canvas.columnWidth(1), {
         fontStyle: 'vsmall',
       });
       canvas.resetLastHeight();

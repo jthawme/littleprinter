@@ -54,7 +54,8 @@ export class Drawing {
 
   constructor(width: number) {
     this.canvas = createCanvas(width, 9999);
-    this.ctx = this.canvas.getContext('2d');
+    this.ctx = this.canvas.getContext('2d', { alpha: true });
+    this.ctx.imageSmoothingEnabled = false;
 
     this.sectionHeights = [];
 

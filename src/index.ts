@@ -33,6 +33,12 @@ const app = firebase.initializeApp({
   appId: '1:869929008471:web:21795422c6eca735469212',
 });
 
+interface MergedDocument {
+  filename: string;
+  width: number;
+  height: number;
+}
+
 type UserObjectItem = {
   name: string;
   options: RedditOptions | WeatherOptions | NewsOptions | false;
@@ -114,7 +120,7 @@ function getUserObject(): Promise<UserObjectItem[]> {
   }
 }
 
-function run(): Promise<string> {
+function run(): Promise<MergedDocument> {
   return getUserObject().then((obj) =>
     Promise.all(expandUserObject(obj).map((o) => selectService(o.name, o.options || undefined))).then(
       createMergedDocument,
@@ -122,7 +128,7 @@ function run(): Promise<string> {
   );
 }
 
-function createMergedDocument(pages: Array<SaveCanvasObject | null>): string {
+function createMergedDocument(pages: Array<SaveCanvasObject | null>): MergedDocument {
   const documentWidth = Math.max(...pages.map((p) => p?.width || 0));
   const documentHeight = pages.reduce((prev, curr) => prev + (curr?.height || 0), 0);
   const { doc, filename } = createDocument(documentWidth, documentHeight);
@@ -133,28 +139,28 @@ function createMergedDocument(pages: Array<SaveCanvasObject | null>): string {
   });
   doc.end();
 
-  return filename;
+  return { width: Math.ceil(documentWidth), height: Math.ceil(documentHeight), filename };
 }
 
-function cleanupFiles(filename: string): Promise<string> {
+function cleanupFiles(doc: MergedDocument): Promise<MergedDocument> {
   const tmpFiles = fs.readdirSync(tmpFolderPath(''));
 
   tmpFiles.forEach((file) => {
-    if (!filename.includes(file)) {
+    if (!doc.filename.includes(file)) {
       fs.unlinkSync(tmpFolderPath(file));
     }
   });
 
-  return Promise.resolve(filename);
+  return Promise.resolve(doc);
 }
 
 run()
   .then(cleanupFiles)
-  .then((filename) => {
+  .then(({ filename, width, height }) => {
     if (process.env.NODE_ENV === 'production') {
-      exec(`lp -o fit-to-page ${filename}`);
+      exec(`lp -o media=Custom.${width}x${height} tmp/${filename.split('/').pop()}`);
       console.log('Sent to printer');
-      console.log(`lp -o fit-to-page ${filename}`);
+      console.log(`lp -o media=Custom.${width}x${height} tmp/${filename.split('/').pop()}`);
     }
     app.delete();
   })
