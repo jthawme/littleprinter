@@ -6,8 +6,15 @@ import { createDocument } from './utils/pdf';
 import logger from './utils/logger';
 import { SaveCanvasObject, Drawing } from './utils/drawing';
 import { tmpFolderPath } from './utils/paths';
+import { width } from 'pdfkit/js/page';
 
 dotenv.config();
+
+interface MergedDocument {
+  filename: string;
+  width: number;
+  height: number;
+}
 
 function createSize(num: number) {
   const d = new Drawing(num);
@@ -19,11 +26,11 @@ function createSize(num: number) {
   return d.saveCanvas();
 }
 
-function run(): Promise<string> {
+function run(): Promise<MergedDocument> {
   return Promise.all([createSize(100), createSize(150), createSize(200)]).then(createMergedDocument);
 }
 
-function createMergedDocument(pages: Array<SaveCanvasObject | null>): string {
+function createMergedDocument(pages: Array<SaveCanvasObject | null>): MergedDocument {
   const documentWidth = Math.max(...pages.map((p) => p?.width || 0));
   const documentHeight = pages.reduce((prev, curr) => prev + (curr?.height || 0), 0);
   const { doc, filename } = createDocument(documentWidth, documentHeight);
@@ -34,26 +41,30 @@ function createMergedDocument(pages: Array<SaveCanvasObject | null>): string {
   });
   doc.end();
 
-  return filename;
+  return {
+    filename,
+    width: documentWidth,
+    height: documentHeight,
+  };
 }
 
-function cleanupFiles(filename: string): Promise<string> {
+function cleanupFiles(doc: MergedDocument): Promise<MergedDocument> {
   const tmpFiles = fs.readdirSync(tmpFolderPath(''));
 
   tmpFiles.forEach((file) => {
-    if (!filename.includes(file)) {
+    if (!doc.filename.includes(file)) {
       fs.unlinkSync(tmpFolderPath(file));
     }
   });
 
-  return Promise.resolve(filename);
+  return Promise.resolve(doc);
 }
 
 run()
   .then(cleanupFiles)
-  .then((filename) => {
+  .then(({ filename, width, height }) => {
     if (process.env.NODE_ENV === 'production') {
-      exec(`lp -o fit-to-page ${filename}`);
+      exec(`lp -o media=Custom.${width}x${height} tmp/${filename.split('/').pop()}`);
       console.log('Sent to printer');
       console.log(`lp -o fit-to-page ${filename}`);
     }
