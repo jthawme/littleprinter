@@ -66,7 +66,7 @@ async function renderWeather(weather: WeatherItem): Promise<SaveCanvasObject> {
       if (idx >= limit) {
         const { sunrise, sunset } = weather.daily[0];
 
-        canvas.wrappedText(`Sunrise ${dayjs(sunrise * 1000).format('hh:mm')}`, canvas.columnWidth(1), {
+        canvas.wrappedText(`${dayjs(sunrise * 1000).format('hh:mm')}`, canvas.columnWidth(1), {
           fontStyle: 'smallTitle',
         });
         canvas.resetLastHeight();
@@ -77,7 +77,7 @@ async function renderWeather(weather: WeatherItem): Promise<SaveCanvasObject> {
         });
         canvas.resetLastHeight();
 
-        canvas.wrappedText(`Sunset ${dayjs(sunset * 1000).format('hh:mm')}`, canvas.columnWidth(1), {
+        canvas.wrappedText(`${dayjs(sunset * 1000).format('hh:mm')}`, canvas.columnWidth(1), {
           fontStyle: 'smallTitle',
           align: 'right',
           x: canvas.columnWidth(3, true),

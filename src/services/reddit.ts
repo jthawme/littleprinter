@@ -71,25 +71,14 @@ async function renderPosts(
         canvas.pad(5);
       }
 
-      await canvas.inline([
-        (x: number) => {
-          if (!withImage) {
-            return { width: 0, height: 0 };
-          }
+      if (thumbnail && thumbnail !== 'default' && thumbnail !== 'self') {
+        await canvas.drawImage(thumbnail, 2);
+        canvas.pad(5);
+      }
 
-          if (thumbnail && thumbnail !== 'default' && thumbnail !== 'self') {
-            return canvas.drawImage(thumbnail, 1, { x });
-          } else {
-            return canvas.rect(1, 50, { color: 'grey', x });
-          }
-        },
-        withImage ? canvas.gutter : 0,
-        (x: number) => {
-          return canvas.wrappedText(title, withImage ? 3 : 4, { x, y: -2 });
-        },
-      ]);
+      canvas.wrappedText(title, 4);
 
-      canvas.pad(10);
+      canvas.pad(15);
 
       runner(idx + 1);
     };

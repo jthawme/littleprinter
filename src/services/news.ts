@@ -131,12 +131,12 @@ async function renderArticles(articles: ArticleItem[]): Promise<SaveCanvasObject
         const imageObject = await canvas.drawImage(urlToImage, 3);
         canvas.resetLastHeight();
         canvas.wrappedText(source.name, 1, {
-          fontStyle: 'small',
+          fontStyle: 'vsmall',
           x: canvas.columnWidth(3, true),
           finalLineHeight: 0,
         });
         canvas.wrappedText(dayjs(publishedAt).format('HH:mm'), 1, {
-          fontStyle: 'small',
+          fontStyle: 'vsmall',
           x: canvas.columnWidth(3, true),
         });
         canvas.resetLastHeight(2);
@@ -144,9 +144,10 @@ async function renderArticles(articles: ArticleItem[]): Promise<SaveCanvasObject
 
         canvas.wrappedText(title, 4, {
           fontStyle: 'heading',
+          finalLineHeight: 0.5,
         });
 
-        canvas.wrappedText(stripSource(description, source.name), 3, {
+        canvas.wrappedText(stripSource(description, source.name), 4, {
           fontStyle: 'small',
         });
 
@@ -157,12 +158,12 @@ async function renderArticles(articles: ArticleItem[]): Promise<SaveCanvasObject
         });
         canvas.resetLastHeight();
         canvas.wrappedText(source.name, 1, {
-          fontStyle: 'small',
+          fontStyle: 'vsmall',
           x: canvas.columnWidth(3, true),
           finalLineHeight: 0,
         });
         canvas.wrappedText(dayjs(publishedAt).format('HH:mm'), 1, {
-          fontStyle: 'small',
+          fontStyle: 'vsmall',
           x: canvas.columnWidth(3, true),
         });
         canvas.resetLastHeight(2);
