@@ -1,4 +1,4 @@
-export const CANVAS_WIDTH = 250;
+export const CANVAS_WIDTH = 300;
 
 export const SERVICE_PADDING = 30;
 
