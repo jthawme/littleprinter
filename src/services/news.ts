@@ -6,7 +6,7 @@ import { NewsService, NewsOptions, SourceItem, ArticleItem } from './types/news'
 import { serviceDataPath } from '../utils/paths';
 import { Drawing, SaveCanvasObject } from '../utils/drawing';
 import { getOfflineData, saveOfflineData } from '../utils/offline';
-import { SERVICES } from '../utils/constants';
+import { SERVICES, CANVAS_WIDTH } from '../utils/constants';
 import dayjs from 'dayjs';
 
 /**
@@ -111,7 +111,7 @@ function getHeadlines({ country, category, source, limit = 3 }: NewsOptions): Pr
  */
 async function renderArticles(articles: ArticleItem[]): Promise<SaveCanvasObject> {
   return new Promise((resolve) => {
-    const canvas = new Drawing(400);
+    const canvas = new Drawing(CANVAS_WIDTH);
 
     canvas.wrappedText('News', undefined, {
       fontStyle: 'smallTitle',
