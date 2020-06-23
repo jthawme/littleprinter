@@ -18,11 +18,11 @@ registerFont(rootPath('src/utils/fonts/gt-pressura-mono-bold.ttf'), {
 // };
 
 const fonts = {
-  vsmall: 'bold 11px monospace',
-  small: '14px monospace',
-  title: 'bold 26px monospace',
-  smallTitle: 'bold 14px monospace',
-  heading: '21px monospace',
+  vsmall: 'bold 8px monospace',
+  small: '10px monospace',
+  title: 'bold 24px monospace',
+  smallTitle: 'bold 10px monospace',
+  heading: '18px monospace',
 };
 
 export type FontStyle = keyof typeof fonts;
