@@ -38,7 +38,8 @@
     "start": "NODE_ENV=development OFFLINE=true ts-node src/index.ts",
     "start:live": "NODE_ENV=development ts-node src/index.ts",
     "start:live:save": "NODE_ENV=development SAVE_OFFLINE=true ts-node src/index.ts",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "prod": "NODE_ENV=production ts-node src/index.ts"
   },
   "keywords": [],
   "author": "",

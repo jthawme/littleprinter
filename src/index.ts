@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import fs from 'fs-extra';
+import { exec } from 'child_process';
 import * as firebase from 'firebase/app';
 import 'firebase/database';
 
@@ -149,7 +150,11 @@ function cleanupFiles(filename: string): Promise<string> {
 
 run()
   .then(cleanupFiles)
-  .then(() => {
+  .then((filename) => {
+    if (process.env.NODE_ENV === 'production') {
+      exec(`lp -o fit-to-page ${filename}`);
+      console.log('Sent to printer');
+    }
     app.delete();
   })
   .catch((e) => {
