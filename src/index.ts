@@ -3,6 +3,7 @@ import fs from 'fs-extra';
 import { exec } from 'child_process';
 import * as firebase from 'firebase/app';
 import 'firebase/database';
+import cron from 'node-cron';
 
 import NewsService from './services/news';
 import RedditService from './services/reddit';
@@ -121,6 +122,8 @@ function getUserObject(): Promise<UserObjectItem[]> {
 }
 
 function run(): Promise<MergedDocument> {
+  logger.info('Running generation');
+
   return getUserObject().then((obj) =>
     Promise.all(expandUserObject(obj).map((o) => selectService(o.name, o.options || undefined))).then(
       createMergedDocument,
@@ -154,16 +157,43 @@ function cleanupFiles(doc: MergedDocument): Promise<MergedDocument> {
   return Promise.resolve(doc);
 }
 
-run()
-  .then(cleanupFiles)
-  .then(({ filename, width, height }) => {
-    if (process.env.NODE_ENV === 'production') {
-      exec(`lp -o media=Custom.${width}x${height} tmp/${filename.split('/').pop()}`);
-      console.log('Sent to printer');
-      console.log(`lp -o media=Custom.${width}x${height} tmp/${filename.split('/').pop()}`);
-    }
-    app.delete();
-  })
-  .catch((e) => {
-    logger.error(e.message);
+function printPaper(): Promise<void> {
+  return run()
+    .then(cleanupFiles)
+    .then(({ filename, width, height }) => {
+      if (process.env.NODE_ENV === 'production') {
+        exec(`lp -o media=Custom.${width}x${height} tmp/${filename.split('/').pop()}`);
+      }
+      app.delete();
+    })
+    .catch((e) => {
+      logger.error(e.message);
+    });
+}
+
+function start(minute = 0, hour = 0) {
+  return cron.schedule(`${minute} ${hour} * * *`, () => {
+    printPaper().then(() => logger.info('Generated newspaper'));
   });
+}
+
+let cronTask: cron.ScheduledTask;
+
+logger.info('Spinning up server');
+
+// Kicks up the
+const infoRef = app.database().ref('info');
+
+infoRef.child('online').onDisconnect().set(false);
+infoRef.child('online').set(true);
+
+infoRef.on('value', (snapshot) => {
+  if (cronTask) {
+    cronTask.destroy();
+  }
+
+  logger.info('Got info from DB', snapshot.val());
+
+  const { minute, hour } = snapshot.val();
+  cronTask = start(minute, hour);
+});

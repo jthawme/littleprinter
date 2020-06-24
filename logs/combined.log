@@ -1,2 +1,12 @@
 {"message":"Error retrieving offline data","level":"error","service":"user-service"}
 {"message":"Error retrieving offline data: hourlyweather.json","level":"error","service":"user-service"}
+{"message":"Spinning up server","level":"info","service":"user-service"}
+{"service":"user-service","hour":1,"minute":30,"level":"info","message":"Got info from DB"}
+{"message":"Spinning up server","level":"info","service":"user-service"}
+{"service":"user-service","online":true,"level":"info","message":"Got info from DB"}
+{"message":"Spinning up server","level":"info","service":"user-service"}
+{"service":"user-service","online":true,"level":"info","message":"Got info from DB"}
+{"message":"Spinning up server","level":"info","service":"user-service"}
+{"service":"user-service","online":true,"level":"info","message":"Got info from DB"}
+{"service":"user-service","minute":0,"online":true,"level":"info","message":"Got info from DB"}
+{"service":"user-service","hour":0,"minute":0,"online":true,"level":"info","message":"Got info from DB"}
