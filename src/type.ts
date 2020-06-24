@@ -29,7 +29,7 @@ function typeTest(fontFamily: string) {
   for (const w in ['', 'bold']) {
     sizes.forEach((s) => {
       d.ctx.font = getFont(s, w);
-      d.wrappedText(`Canvas width: ${CANVAS_WIDTH}`, 4, {
+      d.wrappedText(`${fontFamily} - ${s}px`, 4, {
         fontStyle: false,
       });
     });
@@ -41,7 +41,7 @@ function typeTest(fontFamily: string) {
 function generateTypeTest(): Promise<Array<SaveCanvasObject | null>> {
   logger.info('Running generation');
 
-  return Promise.all([typeTest('sans-serif'), typeTest("'GT Pressura Mono'")]);
+  return Promise.all([typeTest('sans-serif'), typeTest("'GT Pressura Mono'"), typeTest('monospace')]);
 }
 
 function run() {
