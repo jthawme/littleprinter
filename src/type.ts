@@ -26,14 +26,14 @@ function typeTest(fontFamily: string) {
 
   const getFont = (size: number, weight = '') => `${weight} ${size}px ${fontFamily}`;
 
-  for (const w in ['', 'bold']) {
+  ['', 'bold'].forEach((w) => {
     sizes.forEach((s) => {
       d.ctx.font = getFont(s, w);
       d.wrappedText(`${fontFamily} - ${s}px`, 4, {
         fontStyle: false,
       });
     });
-  }
+  });
 
   return d.saveCanvas();
 }

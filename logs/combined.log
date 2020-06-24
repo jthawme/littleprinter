@@ -19,3 +19,7 @@
 {"message":"Running generation","level":"info","service":"user-service","timestamp":"2020-06-24T23:35:00.630Z"}
 {"message":"Printing media","level":"info","service":"user-service","timestamp":"2020-06-24T23:35:01.076Z"}
 {"message":"Command failed: lp -o media=Custom.140x443 tmp/1593041701064.pdf\nlp: Error - No default destination.\n","level":"error","service":"user-service","timestamp":"2020-06-24T23:35:01.129Z"}
+{"message":"Running type test","level":"info","service":"user-service","timestamp":"2020-06-24T23:45:48.204Z"}
+{"message":"Running generation","level":"info","service":"user-service","timestamp":"2020-06-24T23:45:48.205Z"}
+{"message":"Printing media","level":"info","service":"user-service","timestamp":"2020-06-24T23:45:48.704Z"}
+{"message":"Command failed: lp -d none -o media=Custom.140x726 tmp/1593042348691.pdf\nlp: No such file or directory\n","level":"error","service":"user-service","timestamp":"2020-06-24T23:45:48.879Z"}

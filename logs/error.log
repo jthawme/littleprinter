@@ -2,3 +2,4 @@
 {"message":"Error retrieving offline data: hourlyweather.json","level":"error","service":"user-service"}
 {"message":"Command failed: lp -o media=Custom.140x443 tmp/1593041529101.pdf\nlp: Error - No default destination.\n","level":"error","service":"user-service"}
 {"message":"Command failed: lp -o media=Custom.140x443 tmp/1593041701064.pdf\nlp: Error - No default destination.\n","level":"error","service":"user-service","timestamp":"2020-06-24T23:35:01.129Z"}
+{"message":"Command failed: lp -d none -o media=Custom.140x726 tmp/1593042348691.pdf\nlp: No such file or directory\n","level":"error","service":"user-service","timestamp":"2020-06-24T23:45:48.879Z"}
