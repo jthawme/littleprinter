@@ -10,3 +10,12 @@
 {"service":"user-service","online":true,"level":"info","message":"Got info from DB"}
 {"service":"user-service","minute":0,"online":true,"level":"info","message":"Got info from DB"}
 {"service":"user-service","hour":0,"minute":0,"online":true,"level":"info","message":"Got info from DB"}
+{"service":"user-service","hour":0,"minute":0,"online":false,"level":"info","message":"Got info from DB"}
+{"message":"Running type test","level":"info","service":"user-service"}
+{"message":"Running generation","level":"info","service":"user-service"}
+{"message":"Printing media","level":"info","service":"user-service"}
+{"message":"Command failed: lp -o media=Custom.140x443 tmp/1593041529101.pdf\nlp: Error - No default destination.\n","level":"error","service":"user-service"}
+{"message":"Running type test","level":"info","service":"user-service","timestamp":"2020-06-24T23:35:00.629Z"}
+{"message":"Running generation","level":"info","service":"user-service","timestamp":"2020-06-24T23:35:00.630Z"}
+{"message":"Printing media","level":"info","service":"user-service","timestamp":"2020-06-24T23:35:01.076Z"}
+{"message":"Command failed: lp -o media=Custom.140x443 tmp/1593041701064.pdf\nlp: Error - No default destination.\n","level":"error","service":"user-service","timestamp":"2020-06-24T23:35:01.129Z"}

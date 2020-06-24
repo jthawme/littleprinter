@@ -19,7 +19,7 @@ interface WrappedTextOptions extends GenericOptions {
   lineHeight?: number;
   finalLineHeight?: number;
   align?: 'left' | 'center' | 'right';
-  fontStyle?: FontStyle;
+  fontStyle?: FontStyle | false;
 }
 
 interface RectOptions extends GenericOptions {
@@ -124,7 +124,9 @@ export class Drawing {
     this.setTranslate(startingX, startingY);
 
     // Configures the font
-    useFont(fontStyle, this.ctx);
+    if (fontStyle) {
+      useFont(fontStyle, this.ctx);
+    }
 
     // Splits all words into array
     const words = text.split(' ').map((w, idx, arr) => (idx < arr.length - 1 ? `${w} ` : w));
