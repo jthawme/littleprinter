@@ -6,6 +6,7 @@ declare global {
       OFFLINE: boolean;
       SAVE_OFFLINE?: boolean;
       WEATHER_API_KEY?: string;
+      PRINTER_NAME: string;
     }
   }
 }
