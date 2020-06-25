@@ -12,9 +12,10 @@ import HeaderService from './services/header';
 import logger from './utils/logger';
 import { SERVICES } from './utils/constants';
 import { SaveCanvasObject } from './utils/drawing';
-import { getData, getInfo } from './utils/database';
+import { getData, getInfo, cleanupDb } from './utils/database';
 import { cleanupFiles, UserObjectItem, expandUserObject, printPaper } from './utils/shared';
 import { createMergedDocument } from './utils/pdf';
+import { info } from 'console';
 
 dotenv.config();
 
@@ -73,21 +74,27 @@ function getUserObject(): Promise<UserObjectItem[]> {
 function generate(): Promise<Array<SaveCanvasObject | null>> {
   logger.info('Running generation');
 
-  return getUserObject().then((obj) =>
-    Promise.all(expandUserObject(obj).map((o) => selectService(o.name, o.options || undefined))),
-  );
+  return getUserObject().then((obj) => {
+    logger.info('Got user data', obj);
+    return Promise.all(expandUserObject(obj).map((o) => selectService(o.name, o.options || undefined)));
+  });
+}
+
+function run() {
+  return generate()
+    .then(createMergedDocument)
+    .then(cleanupFiles)
+    .then(printPaper)
+    .then(() => logger.info('Generated newspaper'))
+    .catch((err) => logger.error(err.message));
 }
 
 function start(minute = 0, hour = 0) {
   logger.info(`Setting cron to run: ${minute} ${hour} * * *`);
 
   return cron.schedule(`${minute} ${hour} * * *`, () => {
-    generate()
-      .then(createMergedDocument)
-      .then(cleanupFiles)
-      .then(printPaper)
-      .then(() => logger.info('Generated newspaper'))
-      .catch((err) => logger.error(err.message));
+    logger.info('Running cron job');
+    run();
   });
 }
 
@@ -102,6 +109,12 @@ getInfo((value) => {
 
   logger.info('Got info from DB', value);
 
-  const { minute, hour } = value;
-  cronTask = start(minute, hour);
+  if (process.env.SINGLE_PRINT) {
+    run().then(() => {
+      cleanupDb();
+    });
+  } else {
+    const { minute, hour } = value;
+    cronTask = start(minute, hour);
+  }
 });

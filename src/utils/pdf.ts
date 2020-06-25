@@ -4,6 +4,7 @@ import fs from 'fs-extra';
 import { tmpFolderPath } from './paths';
 import { SaveCanvasObject } from './drawing';
 import { MergedDocument } from './shared';
+import logger from './logger';
 
 export function createDocument(width: number, height: number): { doc: PDFKit.PDFDocument; filename: string } {
   const doc = new PDFKit({
@@ -12,8 +13,16 @@ export function createDocument(width: number, height: number): { doc: PDFKit.PDF
   });
   const name = new Date().getTime().toString();
   const filename = tmpFolderPath(`${name}.pdf`);
+  const writeStream = fs.createWriteStream(filename);
 
-  doc.pipe(fs.createWriteStream(filename));
+  doc.pipe(writeStream);
+  writeStream.on('finish', () => {
+    logger.info(`Wrote file ${filename}`);
+  });
+
+  writeStream.on('error', (e: Error) => {
+    logger.error(`Error writing file ${filename}`, e);
+  });
 
   return { doc, filename };
 }

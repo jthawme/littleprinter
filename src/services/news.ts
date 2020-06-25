@@ -128,36 +128,36 @@ async function renderArticles(articles: ArticleItem[]): Promise<SaveCanvasObject
       const { source, title, urlToImage, description, publishedAt } = articles[idx];
 
       if (idx === 0) {
-        const imageObject = await canvas.drawImage(urlToImage, 3);
+        const imageObject = await canvas.drawImage(urlToImage, 4);
         canvas.resetLastHeight();
-        canvas.wrappedText(source.name, 1, {
+        canvas.wrappedText(source.name, 2, {
           fontStyle: 'vsmall',
-          x: canvas.columnWidth(3, true),
+          x: canvas.columnWidth(4, true),
           finalLineHeight: 0,
         });
-        canvas.wrappedText(dayjs(publishedAt).format('HH:mm'), 1, {
+        canvas.wrappedText(dayjs(publishedAt).format('HH:mm'), 2, {
           fontStyle: 'vsmall',
-          x: canvas.columnWidth(3, true),
+          x: canvas.columnWidth(4, true),
         });
         canvas.resetLastHeight(2);
         canvas.pad(imageObject.height);
 
-        canvas.wrappedText(title, 4, {
+        canvas.wrappedText(title, undefined, {
           fontStyle: 'heading',
           finalLineHeight: 0.5,
         });
 
-        canvas.wrappedText(stripSource(description, source.name), 4, {
+        canvas.wrappedText(stripSource(description, source.name), undefined, {
           fontStyle: 'small',
         });
 
         canvas.pad(15);
       } else {
-        canvas.wrappedText(`${source.name} ${dayjs(publishedAt).format('HH:mm')}`, 4, {
+        canvas.wrappedText(`${source.name} ${dayjs(publishedAt).format('HH:mm')}`, undefined, {
           fontStyle: 'vsmall',
           finalLineHeight: 0,
         });
-        canvas.wrappedText(title, 4, {
+        canvas.wrappedText(title, undefined, {
           fontStyle: 'small',
         });
 

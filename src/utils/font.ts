@@ -19,9 +19,9 @@ registerFont(rootPath('src/utils/fonts/gt-pressura-mono-bold.ttf'), {
 
 const fonts = {
   vsmall: 'bold 8px sans-serif',
-  small: '8px sans-serif',
-  title: 'bold 18px sans-serif',
-  smallTitle: 'bold 8px sans-serif',
+  small: '10px sans-serif',
+  title: 'bold 16px sans-serif',
+  smallTitle: 'bold 10px sans-serif',
   heading: '14px sans-serif',
 };
 

@@ -52,6 +52,8 @@ export class Drawing {
 
   gutter = 10;
 
+  totalColumns = 6;
+
   constructor(width: number) {
     this.canvas = createCanvas(width, 9999);
     this.ctx = this.canvas.getContext('2d', { alpha: true });
@@ -87,7 +89,7 @@ export class Drawing {
   }
 
   columnWidth(col: number, withGutter = false): number {
-    const singleColumn = (this.width - this.gutter * 3) / 4;
+    const singleColumn = (this.width - this.gutter * (this.totalColumns - 1)) / this.totalColumns;
     const gutterLength = withGutter ? col : col - 1;
     return singleColumn * col + this.gutter * gutterLength;
   }
@@ -97,7 +99,7 @@ export class Drawing {
       return this.width;
     }
 
-    return num <= 4 ? this.columnWidth(num) : num;
+    return num <= this.totalColumns ? this.columnWidth(num) : num;
   }
 
   get totalHeight(): number {
@@ -266,7 +268,7 @@ export class Drawing {
   }
 
   title(title: string): void {
-    this.wrappedText(title, 4, {
+    this.wrappedText(title, 6, {
       fontStyle: 'smallTitle',
     });
   }

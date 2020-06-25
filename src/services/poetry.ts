@@ -20,7 +20,7 @@ function poemApi(route: string): string {
  *
  * @param options
  */
-function getRandomPoem({ limit = 25 }: PoetryOptions = {}): Promise<PoemItem> {
+function getRandomPoem({ limit = 20 }: PoetryOptions = {}): Promise<PoemItem> {
   if (process.env.OFFLINE) {
     return getOfflineData<PoemItem>('randompoem.json');
   }
@@ -64,7 +64,7 @@ async function renderPosts(poem: PoemItem): Promise<SaveCanvasObject> {
   canvas.pad(10);
 
   poem.lines.forEach((line) => {
-    canvas.wrappedText(line.trim(), 4, {
+    canvas.wrappedText(line.trim(), undefined, {
       fontStyle: 'small',
       finalLineHeight: 0,
     });
@@ -72,7 +72,7 @@ async function renderPosts(poem: PoemItem): Promise<SaveCanvasObject> {
 
   canvas.pad(10);
 
-  canvas.wrappedText(poem.author, 4, {
+  canvas.wrappedText(poem.author, undefined, {
     align: 'right',
   });
 

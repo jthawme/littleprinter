@@ -63,7 +63,7 @@ async function renderPosts(
       if (idx === 0) {
         canvas.title('Reddit');
         canvas.resetLastHeight();
-        canvas.wrappedText(subreddit_name_prefixed, 4, {
+        canvas.wrappedText(subreddit_name_prefixed, undefined, {
           fontStyle: 'smallTitle',
           align: 'right',
         });
@@ -78,11 +78,11 @@ async function renderPosts(
       if (thumbnail && thumbnail !== 'default' && thumbnail !== 'self' && withImage) {
         canvas.resetLastHeight();
 
-        await canvas.drawImage(thumbnail, 2, { x: canvas.columnWidth(2, true) });
+        await canvas.drawImage(thumbnail, 3, { x: canvas.columnWidth(3, true) });
         canvas.pad(5);
       }
 
-      canvas.wrappedText(title, 4);
+      canvas.wrappedText(title, undefined);
 
       canvas.pad(15);
 

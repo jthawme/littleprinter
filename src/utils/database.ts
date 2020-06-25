@@ -29,3 +29,5 @@ export function getInfo(cb: (infoVal: any) => void): any {
     cb(snapshot.val());
   });
 }
+
+export const cleanupDb = (): Promise<any> => app.delete();

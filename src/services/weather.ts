@@ -60,27 +60,27 @@ function getForecase({ lat, lon }: WeatherOptions): Promise<WeatherItem> {
 async function renderWeather(weather: WeatherItem): Promise<SaveCanvasObject> {
   return new Promise((resolve) => {
     const canvas = new Drawing(CANVAS_WIDTH);
-    const limit = 4;
+    const limit = 3;
 
     const runner = async (idx: number) => {
       if (idx >= limit) {
         const { sunrise, sunset } = weather.daily[0];
 
-        canvas.wrappedText(`${dayjs(sunrise * 1000).format('hh:mm')}`, canvas.columnWidth(1), {
+        canvas.wrappedText(`${dayjs(sunrise * 1000).format('hh:mm')}`, canvas.columnWidth(2), {
           fontStyle: 'smallTitle',
         });
         canvas.resetLastHeight();
 
         canvas.rect(canvas.columnWidth(2), 2, {
-          x: canvas.columnWidth(1, true),
-          y: 16,
+          x: canvas.columnWidth(2, true),
+          y: 6,
         });
         canvas.resetLastHeight();
 
-        canvas.wrappedText(`${dayjs(sunset * 1000).format('hh:mm')}`, canvas.columnWidth(1), {
+        canvas.wrappedText(`${dayjs(sunset * 1000).format('hh:mm')}`, canvas.columnWidth(2), {
           fontStyle: 'smallTitle',
           align: 'right',
-          x: canvas.columnWidth(3, true),
+          x: canvas.columnWidth(4, true),
         });
 
         const imageObject = await canvas.saveCanvas();
@@ -93,22 +93,22 @@ async function renderWeather(weather: WeatherItem): Promise<SaveCanvasObject> {
       const { dt, temp } = item;
 
       canvas.ctx.save();
-      canvas.ctx.translate(canvas.columnWidth(idx, true), 0);
+      canvas.ctx.translate(canvas.columnWidth(idx * 2, true), 0);
 
-      canvas.wrappedText(dayjs(dt * 1000).format('ddd'), canvas.columnWidth(1), {
+      canvas.wrappedText(dayjs(dt * 1000).format('ddd'), canvas.columnWidth(2), {
         fontStyle: 'vsmall',
       });
       canvas.resetLastHeight();
-      canvas.wrappedText(`${Math.round(temp.max)}°`, canvas.columnWidth(1), {
+      canvas.wrappedText(`${Math.round(temp.max)}°`, canvas.columnWidth(2), {
         align: 'right',
         fontStyle: 'vsmall',
       });
 
       if (firstWeather) {
-        await canvas.drawImage(weatherIcon(firstWeather.icon), canvas.columnWidth(1));
+        await canvas.drawImage(weatherIcon(firstWeather.icon), canvas.columnWidth(2));
       }
 
-      if (idx < 3) {
+      if (idx < limit - 1) {
         canvas.resetLastHeight(2);
       }
       canvas.ctx.restore();

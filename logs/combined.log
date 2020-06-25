@@ -1,25 +1,30 @@
-{"message":"Error retrieving offline data","level":"error","service":"user-service"}
-{"message":"Error retrieving offline data: hourlyweather.json","level":"error","service":"user-service"}
-{"message":"Spinning up server","level":"info","service":"user-service"}
-{"service":"user-service","hour":1,"minute":30,"level":"info","message":"Got info from DB"}
-{"message":"Spinning up server","level":"info","service":"user-service"}
-{"service":"user-service","online":true,"level":"info","message":"Got info from DB"}
-{"message":"Spinning up server","level":"info","service":"user-service"}
-{"service":"user-service","online":true,"level":"info","message":"Got info from DB"}
-{"message":"Spinning up server","level":"info","service":"user-service"}
-{"service":"user-service","online":true,"level":"info","message":"Got info from DB"}
-{"service":"user-service","minute":0,"online":true,"level":"info","message":"Got info from DB"}
-{"service":"user-service","hour":0,"minute":0,"online":true,"level":"info","message":"Got info from DB"}
-{"service":"user-service","hour":0,"minute":0,"online":false,"level":"info","message":"Got info from DB"}
-{"message":"Running type test","level":"info","service":"user-service"}
-{"message":"Running generation","level":"info","service":"user-service"}
-{"message":"Printing media","level":"info","service":"user-service"}
-{"message":"Command failed: lp -o media=Custom.140x443 tmp/1593041529101.pdf\nlp: Error - No default destination.\n","level":"error","service":"user-service"}
-{"message":"Running type test","level":"info","service":"user-service","timestamp":"2020-06-24T23:35:00.629Z"}
-{"message":"Running generation","level":"info","service":"user-service","timestamp":"2020-06-24T23:35:00.630Z"}
-{"message":"Printing media","level":"info","service":"user-service","timestamp":"2020-06-24T23:35:01.076Z"}
-{"message":"Command failed: lp -o media=Custom.140x443 tmp/1593041701064.pdf\nlp: Error - No default destination.\n","level":"error","service":"user-service","timestamp":"2020-06-24T23:35:01.129Z"}
-{"message":"Running type test","level":"info","service":"user-service","timestamp":"2020-06-24T23:45:48.204Z"}
-{"message":"Running generation","level":"info","service":"user-service","timestamp":"2020-06-24T23:45:48.205Z"}
-{"message":"Printing media","level":"info","service":"user-service","timestamp":"2020-06-24T23:45:48.704Z"}
-{"message":"Command failed: lp -d none -o media=Custom.140x726 tmp/1593042348691.pdf\nlp: No such file or directory\n","level":"error","service":"user-service","timestamp":"2020-06-24T23:45:48.879Z"}
+{"message":"Spinning up server","level":"info","service":"user-service","timestamp":"2020-06-25T00:29:54.308Z"}
+{"service":"user-service","hour":0,"minute":0,"online":true,"level":"info","message":"Got info from DB","timestamp":"2020-06-25T00:29:55.196Z"}
+{"message":"Running generation","level":"info","service":"user-service","timestamp":"2020-06-25T00:29:55.198Z"}
+{"message":"Spinning up server","level":"info","service":"user-service","timestamp":"2020-06-25T00:34:10.498Z"}
+{"service":"user-service","hour":0,"minute":0,"online":true,"level":"info","message":"Got info from DB","timestamp":"2020-06-25T00:34:11.397Z"}
+{"message":"Running generation","level":"info","service":"user-service","timestamp":"2020-06-25T00:34:11.400Z"}
+{"message":"Spinning up server","level":"info","service":"user-service","timestamp":"2020-06-25T00:35:11.389Z"}
+{"service":"user-service","hour":0,"minute":0,"online":true,"level":"info","message":"Got info from DB","timestamp":"2020-06-25T00:35:12.247Z"}
+{"message":"Running generation","level":"info","service":"user-service","timestamp":"2020-06-25T00:35:12.250Z"}
+{"message":"Spinning up server","level":"info","service":"user-service","timestamp":"2020-06-25T00:37:41.179Z"}
+{"service":"user-service","hour":0,"minute":0,"online":true,"level":"info","message":"Got info from DB","timestamp":"2020-06-25T00:37:42.035Z"}
+{"message":"Running generation","level":"info","service":"user-service","timestamp":"2020-06-25T00:37:42.037Z"}
+{"message":"Spinning up server","level":"info","service":"user-service","timestamp":"2020-06-25T00:39:09.420Z"}
+{"service":"user-service","hour":0,"minute":0,"online":true,"level":"info","message":"Got info from DB","timestamp":"2020-06-25T00:39:10.304Z"}
+{"message":"Running generation","level":"info","service":"user-service","timestamp":"2020-06-25T00:39:10.307Z"}
+{"0":{"name":"News Service","options":{"source":"bbc-news"}},"1":{"name":"Poetry Service"},"2":{"name":"Reddit Service","options":{"limit":2,"subreddit":"r/todayilearned"}},"3":{"name":"Weather Service","options":{"lat":51.53796,"lon":-0.11896}},"service":"user-service","level":"info","message":"Got user data","timestamp":"2020-06-25T00:39:10.452Z"}
+{"message":"Printing media","level":"info","service":"user-service","timestamp":"2020-06-25T00:39:13.450Z"}
+{"message":"Generated newspaper","level":"info","service":"user-service","timestamp":"2020-06-25T00:39:14.012Z"}
+{"service":"user-service","hour":0,"minute":0,"online":false,"level":"info","message":"Got info from DB","timestamp":"2020-06-25T00:39:14.044Z"}
+{"message":"Running generation","level":"info","service":"user-service","timestamp":"2020-06-25T00:39:14.045Z"}
+{"message":"Wrote file /home/pi/Desktop/littleprinter/tmp/1593045553288.pdf","level":"info","service":"user-service","timestamp":"2020-06-25T00:39:14.843Z"}
+{"message":"Spinning up server","level":"info","service":"user-service","timestamp":"2020-06-25T00:43:19.312Z"}
+{"service":"user-service","hour":0,"minute":0,"online":true,"level":"info","message":"Got info from DB","timestamp":"2020-06-25T00:43:20.100Z"}
+{"message":"Running generation","level":"info","service":"user-service","timestamp":"2020-06-25T00:43:20.104Z"}
+{"0":{"name":"News Service","options":{"source":"bbc-news"}},"1":{"name":"Poetry Service"},"2":{"name":"Reddit Service","options":{"limit":2,"subreddit":"r/todayilearned"}},"3":{"name":"Weather Service","options":{"lat":51.53796,"lon":-0.11896}},"service":"user-service","level":"info","message":"Got user data","timestamp":"2020-06-25T00:43:20.241Z"}
+{"message":"Printing media","level":"info","service":"user-service","timestamp":"2020-06-25T00:43:22.513Z"}
+{"message":"Generated newspaper","level":"info","service":"user-service","timestamp":"2020-06-25T00:43:23.437Z"}
+{"service":"user-service","hour":0,"minute":0,"online":false,"level":"info","message":"Got info from DB","timestamp":"2020-06-25T00:43:23.471Z"}
+{"message":"Running generation","level":"info","service":"user-service","timestamp":"2020-06-25T00:43:23.473Z"}
+{"message":"Wrote file /home/pi/Desktop/littleprinter/tmp/1593045802186.pdf","level":"info","service":"user-service","timestamp":"2020-06-25T00:43:24.043Z"}

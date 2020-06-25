@@ -58,7 +58,9 @@ export function printPaper({ filename, width, height }: MergedDocument): Promise
   }
 
   logger.info('Printing media');
-  const cmd = `lp -d ${process.env.PRINTER_NAME} -o media=Custom.${width}x${height} tmp/${filename.split('/').pop()}`;
+  const cmd = `/usr/bin/lp -d ${process.env.PRINTER_NAME} -o media=Custom.${width}x${height} tmp/${filename
+    .split('/')
+    .pop()}`;
 
   return new Promise((resolve, reject) => {
     exec(cmd, (error, stdout, stderr) => {
