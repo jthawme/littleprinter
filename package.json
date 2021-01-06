@@ -4,7 +4,7 @@
   "description": "A service that can print receipts periodically with useful or not so useful material",
   "main": "src/index.ts",
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "canvas": "^2.6.1",
     "dayjs": "^1.8.28",
     "dotenv": "^8.2.0",
